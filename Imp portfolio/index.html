@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Raj C. Tribhuvane — Mission Log</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.1/aos.min.css">
+
+<style>
+:root{
+  --bg:#05070d;
+  --panel:#0b1220;
+  --panel-2:#0f1830;
+  --line:#1c2740;
+  --line-soft:#141d33;
+  --cyan:#4fd8e8;
+  --cyan-dim:#2a5a63;
+  --amber:#ffb454;
+  --green:#6ee7a0;
+  --red:#ff6b6b;
+  --text:#e8edf4;
+  --text-dim:#8291a8;
+  --text-faint:#4d5a70;
+  --font-display:'Space Grotesk',sans-serif;
+  --font-body:'Inter',sans-serif;
+  --font-mono:'JetBrains Mono',monospace;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--font-body);
+  overflow-x:hidden;
+  position:relative;
+}
+
+::selection{background:var(--cyan);color:#05070d;}
+
+/* scrollbar */
+::-webkit-scrollbar{width:8px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--line);border-radius:4px;}
+
+a{color:inherit;text-decoration:none;}
+
+.mono{font-family:var(--font-mono);}
+
+/* ============ layered background ============ */
+#stars-canvas{
+  position:fixed;
+  top:0;left:0;
+  width:100%;height:100%;
+  z-index:0;
+  pointer-events:none;
+}
+.grid-overlay{
+  position:fixed;
+  inset:0;
+  z-index:1;
+  pointer-events:none;
+  background-image:
+    linear-gradient(to right, rgba(79,216,232,0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(79,216,232,0.035) 1px, transparent 1px);
+  background-size:64px 64px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 20%, black 40%, transparent 100%);
+}
+.vignette{
+  position:fixed;
+  inset:0;
+  z-index:1;
+  pointer-events:none;
+  background: radial-gradient(ellipse 90% 70% at 50% 0%, transparent 30%, var(--bg) 100%);
+}
+
+/* ============ top bar ============ */
+.topbar{
+  position:fixed;
+  top:0;left:0;right:0;
+  z-index:100;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:16px 32px;
+  background:rgba(5,7,13,0.75);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line-soft);
+}
+.topbar-brand{
+  font-family:var(--font-display);
+  font-weight:600;
+  font-size:15px;
+  letter-spacing:0.04em;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.brand-dot{
+  width:8px;height:8px;
+  border-radius:50%;
+  background:var(--green);
+  box-shadow:0 0 8px var(--green);
+  animation:pulse-dot 2s ease-in-out infinite;
+}
+@keyframes pulse-dot{
+  0%,100%{opacity:1;}
+  50%{opacity:0.4;}
+}
+.topbar-nav{
+  display:flex;
+  gap:28px;
+  font-family:var(--font-mono);
+  font-size:12px;
+  letter-spacing:0.06em;
+  color:var(--text-dim);
+}
+.topbar-nav a{
+  transition:color 0.2s;
+  position:relative;
+}
+.topbar-nav a:hover{color:var(--cyan);}
+.topbar-status{
+  font-family:var(--font-mono);
+  font-size:11px;
+  color:var(--text-faint);
+  display:flex;
+  gap:16px;
+  align-items:center;
+}
+.topbar-status .sig{color:var(--green);}
+@media (max-width:860px){
+  .topbar-nav{display:none;}
+}
+
+/* ============ hero ============ */
+.hero{
+  position:relative;
+  z-index:2;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  padding:120px 32px 80px;
+  max-width:1280px;
+  margin:0 auto;
+}
+.hero-grid{
+  display:grid;
+  grid-template-columns:1.1fr 0.9fr;
+  gap:40px;
+  width:100%;
+  align-items:center;
+}
+#hero-3d{
+  position:relative;
+  height:520px;
+  width:100%;
+}
+#hero-3d canvas{
+  width:100% !important;
+  height:100% !important;
+}
+.telemetry-tag{
+  position:absolute;
+  font-family:var(--font-mono);
+  font-size:10px;
+  color:var(--cyan);
+  letter-spacing:0.05em;
+  opacity:0.85;
+  pointer-events:none;
+}
+.tt-1{top:6%;left:2%;}
+.tt-2{bottom:10%;right:4%;text-align:right;}
+.tt-3{top:44%;right:0%;}
+
+.eyebrow{
+  font-family:var(--font-mono);
+  font-size:12px;
+  letter-spacing:0.12em;
+  color:var(--amber);
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:20px;
+}
+.eyebrow::before{
+  content:'';
+  width:24px;height:1px;
+  background:var(--amber);
+}
+.hero-headline{
+  font-family:var(--font-display);
+  font-size:clamp(34px,4.6vw,58px);
+  font-weight:700;
+  line-height:1.08;
+  letter-spacing:-0.01em;
+  margin-bottom:22px;
+}
+.hero-headline .hl-cyan{color:var(--cyan);}
+.hero-sub{
+  font-size:16px;
+  line-height:1.65;
+  color:var(--text-dim);
+  max-width:520px;
+  margin-bottom:34px;
+}
+.hero-cta{
+  display:flex;
+  gap:14px;
+  flex-wrap:wrap;
+  margin-bottom:44px;
+}
+.btn{
+  font-family:var(--font-mono);
+  font-size:13px;
+  letter-spacing:0.04em;
+  padding:13px 24px;
+  border-radius:2px;
+  cursor:pointer;
+  transition:all 0.2s ease;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+}
+.btn-primary{
+  background:var(--cyan);
+  color:#05070d;
+  border:1px solid var(--cyan);
+  font-weight:600;
+}
+.btn-primary:hover{
+  background:#6fe4f1;
+  transform:translateY(-1px);
+  box-shadow:0 6px 20px rgba(79,216,232,0.25);
+}
+.btn-ghost{
+  background:transparent;
+  border:1px solid var(--line);
+  color:var(--text);
+}
+.btn-ghost:hover{
+  border-color:var(--cyan);
+  color:var(--cyan);
+}
+
+.hero-stats{
+  display:flex;
+  gap:0;
+  border-top:1px solid var(--line-soft);
+  padding-top:22px;
+}
+.hstat{
+  flex:1;
+  padding-right:20px;
+}
+.hstat + .hstat{
+  border-left:1px solid var(--line-soft);
+  padding-left:20px;
+}
+.hstat-num{
+  font-family:var(--font-mono);
+  font-size:26px;
+  font-weight:700;
+  color:var(--cyan);
+  line-height:1;
+}
+.hstat-label{
+  font-family:var(--font-mono);
+  font-size:10px;
+  color:var(--text-faint);
+  letter-spacing:0.06em;
+  margin-top:6px;
+  text-transform:uppercase;
+}
+
+@media (max-width:900px){
+  .hero-grid{grid-template-columns:1fr;}
+  #hero-3d{height:340px;order:-1;}
+  .hero-stats{flex-wrap:wrap;}
+}
+
+/* ============ section shell ============ */
+.section{
+  position:relative;
+  z-index:2;
+  max-width:1280px;
+  margin:0 auto;
+  padding:110px 32px;
+}
+.section-head{
+  display:flex;
+  align-items:baseline;
+  gap:16px;
+  margin-bottom:52px;
+}
+.section-index{
+  font-family:var(--font-mono);
+  font-size:13px;
+  color:var(--text-faint);
+}
+.section-title{
+  font-family:var(--font-display);
+  font-size:clamp(26px,3vw,36px);
+  font-weight:600;
+  letter-spacing:-0.01em;
+}
+.section-line{
+  flex:1;
+  height:1px;
+  background:var(--line);
+}
+
+/* ============ about / gauges ============ */
+.about-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:60px;
+  align-items:start;
+}
+.about-text p{
+  color:var(--text-dim);
+  line-height:1.8;
+  font-size:15px;
+  margin-bottom:18px;
+}
+.about-text strong{color:var(--text);font-weight:600;}
+.gauge-panel{
+  border:1px solid var(--line);
+  background:var(--panel);
+  border-radius:4px;
+  overflow:hidden;
+}
+.gauge-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:18px 22px;
+  border-bottom:1px solid var(--line-soft);
+  font-family:var(--font-mono);
+  font-size:13px;
+}
+.gauge-row:last-child{border-bottom:none;}
+.gauge-label{color:var(--text-dim);letter-spacing:0.03em;}
+.gauge-value{color:var(--cyan);font-weight:600;}
+.gauge-bar-wrap{
+  padding:0 22px 20px;
+}
+.gauge-bar{
+  height:4px;
+  background:var(--line-soft);
+  border-radius:2px;
+  overflow:hidden;
+  margin-top:4px;
+}
+.gauge-bar-fill{
+  height:100%;
+  background:linear-gradient(90deg,var(--cyan-dim),var(--cyan));
+  width:0%;
+  transition:width 1.4s cubic-bezier(.16,.84,.44,1);
+  border-radius:2px;
+}
+
+@media (max-width:860px){
+  .about-grid{grid-template-columns:1fr;gap:40px;}
+}
+
+/* ============ stack ============ */
+.stack-list{
+  display:flex;
+  flex-direction:column;
+  border:1px solid var(--line);
+  border-radius:4px;
+  overflow:hidden;
+}
+.stack-row{
+  display:grid;
+  grid-template-columns:180px 1fr;
+  border-bottom:1px solid var(--line-soft);
+  background:var(--panel);
+}
+.stack-row:last-child{border-bottom:none;}
+.stack-row:nth-child(even){background:var(--panel-2);}
+.stack-cat{
+  font-family:var(--font-mono);
+  font-size:11px;
+  letter-spacing:0.08em;
+  color:var(--amber);
+  padding:20px 22px;
+  border-right:1px solid var(--line-soft);
+  display:flex;
+  align-items:center;
+  text-transform:uppercase;
+}
+.stack-items{
+  padding:16px 22px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  align-items:center;
+}
+.chip{
+  font-family:var(--font-mono);
+  font-size:12px;
+  padding:6px 12px;
+  border:1px solid var(--line);
+  border-radius:20px;
+  color:var(--text-dim);
+  transition:all 0.2s;
+}
+.chip:hover{
+  border-color:var(--cyan);
+  color:var(--cyan);
+}
+@media (max-width:700px){
+  .stack-row{grid-template-columns:1fr;}
+  .stack-cat{border-right:none;border-bottom:1px solid var(--line-soft);}
+}
+
+/* ============ experience timeline ============ */
+.timeline{
+  position:relative;
+  padding-left:32px;
+}
+.timeline::before{
+  content:'';
+  position:absolute;
+  left:5px;top:6px;bottom:6px;
+  width:1px;
+  background:var(--line);
+}
+.tl-item{
+  position:relative;
+  padding-bottom:52px;
+}
+.tl-item:last-child{padding-bottom:0;}
+.tl-dot{
+  position:absolute;
+  left:-32px;top:4px;
+  width:11px;height:11px;
+  border-radius:50%;
+  background:var(--bg);
+  border:2px solid var(--cyan);
+}
+.tl-item.active .tl-dot{
+  background:var(--cyan);
+  box-shadow:0 0 10px var(--cyan);
+}
+.tl-date{
+  font-family:var(--font-mono);
+  font-size:11px;
+  color:var(--text-faint);
+  letter-spacing:0.05em;
+  margin-bottom:8px;
+}
+.tl-role{
+  font-family:var(--font-display);
+  font-size:20px;
+  font-weight:600;
+  margin-bottom:2px;
+}
+.tl-org{
+  font-family:var(--font-mono);
+  font-size:13px;
+  color:var(--cyan);
+  margin-bottom:14px;
+}
+.tl-tags{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+.tl-tags span{
+  font-family:var(--font-mono);
+  font-size:11px;
+  color:var(--text-dim);
+  border:1px solid var(--line-soft);
+  padding:4px 10px;
+  border-radius:2px;
+}
+
+/* ============ projects ============ */
+.proj-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:22px;
+}
+.proj-card{
+  border:1px solid var(--line);
+  background:var(--panel);
+  border-radius:4px;
+  padding:26px;
+  position:relative;
+  transition:border-color 0.25s, transform 0.25s;
+  overflow:hidden;
+}
+.proj-card::before{
+  content:'';
+  position:absolute;
+  top:0;left:0;right:0;
+  height:2px;
+  background:linear-gradient(90deg,transparent,var(--cyan),transparent);
+  opacity:0;
+  transition:opacity 0.25s;
+}
+.proj-card:hover{
+  border-color:var(--cyan-dim);
+  transform:translateY(-3px);
+}
+.proj-card:hover::before{opacity:1;}
+.proj-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  margin-bottom:14px;
+}
+.proj-name{
+  font-family:var(--font-display);
+  font-size:19px;
+  font-weight:600;
+}
+.proj-tagline{
+  font-family:var(--font-mono);
+  font-size:11px;
+  color:var(--text-faint);
+  margin-top:3px;
+  letter-spacing:0.03em;
+}
+.status-badge{
+  font-family:var(--font-mono);
+  font-size:10px;
+  letter-spacing:0.06em;
+  padding:4px 9px;
+  border-radius:20px;
+  white-space:nowrap;
+  display:flex;
+  align-items:center;
+  gap:5px;
+}
+.status-live{color:var(--green);border:1px solid rgba(110,231,160,0.3);background:rgba(110,231,160,0.06);}
+.status-active{color:var(--amber);border:1px solid rgba(255,180,84,0.3);background:rgba(255,180,84,0.06);}
+.status-badge .dot{width:5px;height:5px;border-radius:50%;background:currentColor;}
+.proj-desc{
+  font-size:13.5px;
+  color:var(--text-dim);
+  line-height:1.6;
+  margin-bottom:16px;
+}
+.proj-feat{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin-bottom:18px;
+}
+.proj-feat span{
+  font-size:11px;
+  font-family:var(--font-mono);
+  color:var(--text-faint);
+}
+.proj-feat span:not(:last-child)::after{content:' · ';color:var(--line);}
+.proj-bottom{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding-top:14px;
+  border-top:1px solid var(--line-soft);
+}
+.proj-tech{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+}
+.proj-tech span{
+  font-family:var(--font-mono);
+  font-size:10px;
+  color:var(--cyan);
+  opacity:0.8;
+}
+.proj-link{
+  font-family:var(--font-mono);
+  font-size:11px;
+  color:var(--text-dim);
+  border-bottom:1px solid transparent;
+  transition:all 0.2s;
+}
+.proj-link:hover{color:var(--cyan);border-color:var(--cyan);}
+
+@media (max-width:820px){
+  .proj-grid{grid-template-columns:1fr;}
+}
+
+/* ============ certifications ============ */
+.cert-list{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:1px;
+  background:var(--line-soft);
+  border:1px solid var(--line-soft);
+}
+.cert-item{
+  background:var(--panel);
+  padding:20px 24px;
+  display:flex;
+  align-items:center;
+  gap:14px;
+  font-size:13.5px;
+  color:var(--text-dim);
+  transition:background 0.2s;
+}
+.cert-item:hover{background:var(--panel-2);color:var(--text);}
+.cert-num{
+  font-family:var(--font-mono);
+  font-size:11px;
+  color:var(--text-faint);
+  min-width:26px;
+}
+@media (max-width:700px){
+  .cert-list{grid-template-columns:1fr;}
+}
+
+/* ============ contact / footer ============ */
+.contact-panel{
+  border:1px solid var(--line);
+  border-radius:4px;
+  background:linear-gradient(180deg,var(--panel),var(--panel-2));
+  padding:64px 48px;
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+}
+.contact-eyebrow{
+  font-family:var(--font-mono);
+  font-size:12px;
+  color:var(--green);
+  letter-spacing:0.1em;
+  margin-bottom:18px;
+}
+.contact-title{
+  font-family:var(--font-display);
+  font-size:clamp(26px,4vw,42px);
+  font-weight:700;
+  margin-bottom:18px;
+}
+.contact-title .hl-cyan{color:var(--cyan);}
+.contact-sub{
+  color:var(--text-dim);
+  font-size:15px;
+  max-width:480px;
+  margin:0 auto 34px;
+  line-height:1.7;
+}
+.contact-links{
+  display:flex;
+  gap:14px;
+  justify-content:center;
+  flex-wrap:wrap;
+}
+
+.footer{
+  position:relative;
+  z-index:2;
+  border-top:1px solid var(--line-soft);
+  padding:28px 32px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  max-width:1280px;
+  margin:0 auto;
+  font-family:var(--font-mono);
+  font-size:11px;
+  color:var(--text-faint);
+  flex-wrap:wrap;
+  gap:10px;
+}
+
+@media (max-width:860px){
+  .section{padding:80px 22px;}
+  .hero{padding:110px 22px 60px;}
+}
+</style>
+</head>
+<body>
+
+<canvas id="stars-canvas"></canvas>
+<div class="grid-overlay"></div>
+<div class="vignette"></div>
+
+<!-- ============ TOP BAR ============ -->
+<div class="topbar">
+  <div class="topbar-brand"><span class="brand-dot"></span> R.C.TRIBHUVANE</div>
+  <div class="topbar-nav">
+    <a href="#about">01 · ABOUT</a>
+    <a href="#stack">02 · STACK</a>
+    <a href="#experience">03 · LOG</a>
+    <a href="#projects">04 · MISSIONS</a>
+    <a href="#certs">05 · CERTS</a>
+    <a href="#contact">06 · CONNECT</a>
+  </div>
+  <div class="topbar-status">
+    <span class="sig">● SIGNAL STRONG</span>
+    <span id="clock">00:00:00 IST</span>
+  </div>
+</div>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="hero-grid">
+    <div class="hero-copy">
+      <div class="eyebrow">SYSTEM STATUS: ONLINE — B.E. CSE, MUMBAI UNIVERSITY '28</div>
+      <h1 class="hero-headline">I build the backend<br>that stays up when<br><span class="hl-cyan">the sky falls.</span></h1>
+      <p class="hero-sub">Full-stack &amp; backend developer building disaster-response platforms, satellite mission dashboards, and AI-assisted tools — from Kalyan to orbit. Currently a Backend AI Engineering Intern at FlyRank AI.</p>
+      <div class="hero-cta">
+        <a href="#projects" class="btn btn-primary">VIEW MISSIONS →</a>
+        <a href="#contact" class="btn btn-ghost">ESTABLISH CONTACT</a>
+      </div>
+      <div class="hero-stats">
+        <div class="hstat"><div class="hstat-num" data-count="7">0</div><div class="hstat-label">Deployed Projects</div></div>
+        <div class="hstat"><div class="hstat-num" data-count="7">0</div><div class="hstat-label">Certifications</div></div>
+        <div class="hstat"><div class="hstat-num" data-count="7" data-decimal="5">0</div><div class="hstat-label">CGPA / 10</div></div>
+      </div>
+    </div>
+    <div id="hero-3d">
+      <div class="telemetry-tag tt-1">SAT.ID: NKX-01<br>ALT: <span id="tel-alt">408.2</span> KM</div>
+      <div class="telemetry-tag tt-2">ORBIT VELOCITY<br><span id="tel-vel">7.66</span> KM/S</div>
+      <div class="telemetry-tag tt-3">SIGNAL<br>▁▃▅▇▅▃▁</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ABOUT ============ -->
+<section class="section" id="about">
+  <div class="section-head">
+    <span class="section-index mono">01</span>
+    <h2 class="section-title">Flight Profile</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="about-grid">
+    <div class="about-text" data-aos="fade-up">
+      <p>I'm <strong>Raj Tribhuvane</strong>, a Computer Science Engineering student at Mumbai University and a Backend AI Engineering Intern at <strong>FlyRank AI</strong>. My work sits at the intersection of full-stack development, backend architecture, and applied AI.</p>
+      <p>Most of my projects start from a real-world failure point: relief coordination breaking down after a disaster, satellite imagery clouded over at the wrong moment, mission data scattered across disconnected tools. I build the dashboards and APIs that keep that information usable under pressure.</p>
+      <p>Outside of coursework, I contribute to open source through Social Summer of Code — shipping features, fixing bugs, and reviewing code with distributed teams.</p>
+    </div>
+    <div class="gauge-panel" data-aos="fade-up" data-aos-delay="100">
+      <div class="gauge-row"><span class="gauge-label">EDUCATION</span><span class="gauge-value">B.E. CSE</span></div>
+      <div class="gauge-row"><span class="gauge-label">INSTITUTION</span><span class="gauge-value">Mumbai University</span></div>
+      <div class="gauge-row"><span class="gauge-label">TIMELINE</span><span class="gauge-value">2024 — 2028</span></div>
+      <div class="gauge-row"><span class="gauge-label">CURRENT ROLE</span><span class="gauge-value">Backend AI Intern</span></div>
+      <div style="padding:20px 22px 6px;">
+        <div class="gauge-row" style="padding:0 0 6px;border:none;"><span class="gauge-label">CGPA</span><span class="gauge-value">7.5 / 10</span></div>
+        <div class="gauge-bar"><div class="gauge-bar-fill" data-target="75"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ STACK ============ -->
+<section class="section" id="stack">
+  <div class="section-head">
+    <span class="section-index mono">02</span>
+    <h2 class="section-title">Onboard Systems</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="stack-list" data-aos="fade-up">
+    <div class="stack-row">
+      <div class="stack-cat">Languages</div>
+      <div class="stack-items">
+        <span class="chip">Java</span><span class="chip">JavaScript</span><span class="chip">TypeScript</span><span class="chip">Python</span><span class="chip">MySQL</span>
+      </div>
+    </div>
+    <div class="stack-row">
+      <div class="stack-cat">Frontend</div>
+      <div class="stack-items">
+        <span class="chip">React</span><span class="chip">Next.js</span><span class="chip">Three.js</span><span class="chip">Tailwind</span><span class="chip">Framer Motion</span><span class="chip">Vite</span><span class="chip">Recharts</span><span class="chip">Leaflet.js</span>
+      </div>
+    </div>
+    <div class="stack-row">
+      <div class="stack-cat">Backend</div>
+      <div class="stack-items">
+        <span class="chip">Node.js</span><span class="chip">Express</span><span class="chip">Spring Boot</span><span class="chip">Flask</span><span class="chip">REST APIs</span><span class="chip">JWT Auth</span><span class="chip">Socket.IO</span>
+      </div>
+    </div>
+    <div class="stack-row">
+      <div class="stack-cat">Database</div>
+      <div class="stack-items">
+        <span class="chip">MongoDB Atlas</span><span class="chip">MySQL</span><span class="chip">SQLite</span>
+      </div>
+    </div>
+    <div class="stack-row">
+      <div class="stack-cat">Cloud &amp; Tools</div>
+      <div class="stack-items">
+        <span class="chip">Git</span><span class="chip">GitHub</span><span class="chip">Firebase</span><span class="chip">Cloudinary</span><span class="chip">Razorpay</span><span class="chip">Axios</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ EXPERIENCE ============ -->
+<section class="section" id="experience">
+  <div class="section-head">
+    <span class="section-index mono">03</span>
+    <h2 class="section-title">Mission Log</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="timeline">
+    <div class="tl-item active" data-aos="fade-up">
+      <div class="tl-dot"></div>
+      <div class="tl-date">JULY 2026 — PRESENT</div>
+      <div class="tl-role">Backend AI Engineering Intern</div>
+      <div class="tl-org">FlyRank AI · Remote</div>
+      <div class="tl-tags">
+        <span>Backend APIs</span><span>Scalable Applications</span><span>AI-assisted Development</span><span>REST Integration</span><span>Backend Architecture</span>
+      </div>
+    </div>
+    <div class="tl-item" data-aos="fade-up" data-aos-delay="100">
+      <div class="tl-dot"></div>
+      <div class="tl-date">ONGOING</div>
+      <div class="tl-role">Open Source Contributor</div>
+      <div class="tl-org">Social Summer of Code</div>
+      <div class="tl-tags">
+        <span>Feature Development</span><span>Bug Fixes</span><span>Documentation</span><span>Code Reviews</span><span>Git Workflow</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PROJECTS ============ -->
+<section class="section" id="projects">
+  <div class="section-head">
+    <span class="section-index mono">04</span>
+    <h2 class="section-title">Active Missions</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="proj-grid">
+
+    <div class="proj-card" data-aos="fade-up">
+      <div class="proj-top">
+        <div><div class="proj-name">DisasterShield AI</div><div class="proj-tagline">AI-powered disaster management platform</div></div>
+        <div class="status-badge status-active"><span class="dot"></span>ACTIVE</div>
+      </div>
+      <div class="proj-desc">Coordinates emergency response end-to-end — SOS signals, live disaster reporting, volunteer routing, and relief camp discovery, backed by an AI assistant and a role-based command dashboard.</div>
+      <div class="proj-feat"><span>Emergency SOS</span><span>Volunteer Coordination</span><span>Relief Camp Discovery</span><span>AI Assistant</span></div>
+      <div class="proj-bottom">
+        <div class="proj-tech"><span>REACT</span><span>NODE</span><span>SOCKET.IO</span><span>THREE.JS</span></div>
+      </div>
+    </div>
+
+    <div class="proj-card" data-aos="fade-up" data-aos-delay="60">
+      <div class="proj-top">
+        <div><div class="proj-name">Nakshatra-X</div><div class="proj-tagline">Satellite mission control dashboard</div></div>
+        <div class="status-badge status-live"><span class="dot"></span>LIVE</div>
+      </div>
+      <div class="proj-desc">A command-deck interface for satellite operations — real-time tracking, 3D orbital visualization, and secured mission dashboards for operators.</div>
+      <div class="proj-feat"><span>3D Space Visualization</span><span>Satellite Tracking</span><span>Secure Auth</span></div>
+      <div class="proj-bottom">
+        <div class="proj-tech"><span>REACT</span><span>THREE.JS</span><span>FIREBASE</span></div>
+        <a href="https://nakshatra-x1969.web.app/" target="_blank" class="proj-link">nakshatra-x1969.web.app →</a>
+      </div>
+    </div>
+
+    <div class="proj-card" data-aos="fade-up">
+      <div class="proj-top">
+        <div><div class="proj-name">AstraClear AI</div><div class="proj-tagline">AI satellite image enhancement</div></div>
+        <div class="status-badge status-live"><span class="dot"></span>LIVE</div>
+      </div>
+      <div class="proj-desc">Clears cloud cover from satellite imagery using AI, with an analytics layer and interactive maps for reading terrain changes at a glance.</div>
+      <div class="proj-feat"><span>AI Cloud Removal</span><span>Satellite Analytics</span><span>Interactive Maps</span></div>
+      <div class="proj-bottom">
+        <div class="proj-tech"><span>REACT</span><span>AI/ML</span><span>LEAFLET.JS</span></div>
+        <a href="https://astraclear-1969.web.app" target="_blank" class="proj-link">astraclear-1969.web.app →</a>
+      </div>
+    </div>
+
+    <div class="proj-card" data-aos="fade-up" data-aos-delay="60">
+      <div class="proj-top">
+        <div><div class="proj-name">RizzChat</div><div class="proj-tagline">Real-time chat application</div></div>
+        <div class="status-badge status-live"><span class="dot"></span>LIVE</div>
+      </div>
+      <div class="proj-desc">One-to-one messaging with persistent history and media sharing, kept in sync in real time over authenticated sockets.</div>
+      <div class="proj-feat"><span>Authentication</span><span>Media Sharing</span><span>Persistent Messages</span></div>
+      <div class="proj-bottom">
+        <div class="proj-tech"><span>REACT</span><span>SOCKET.IO</span><span>FIREBASE</span></div>
+        <a href="https://rizzchat-2007.web.app/" target="_blank" class="proj-link">rizzchat-2007.web.app →</a>
+      </div>
+    </div>
+
+    <div class="proj-card" data-aos="fade-up">
+      <div class="proj-top">
+        <div><div class="proj-name">OneKart</div><div class="proj-tagline">Full-stack e-commerce platform</div></div>
+        <div class="status-badge status-active"><span class="dot"></span>ACTIVE</div>
+      </div>
+      <div class="proj-desc">A responsive storefront with authenticated checkout and an integrated Razorpay payment flow from cart to confirmation.</div>
+      <div class="proj-feat"><span>Authentication</span><span>Shopping Cart</span><span>Razorpay Integration</span></div>
+      <div class="proj-bottom">
+        <div class="proj-tech"><span>REACT</span><span>NODE</span><span>MONGODB</span></div>
+      </div>
+    </div>
+
+    <div class="proj-card" data-aos="fade-up" data-aos-delay="60">
+      <div class="proj-top">
+        <div><div class="proj-name">Virtual Banking System</div><div class="proj-tagline">Core banking transaction engine</div></div>
+        <div class="status-badge status-active"><span class="dot"></span>ACTIVE</div>
+      </div>
+      <div class="proj-desc">Handles deposits, withdrawals, and transaction tracking with a Spring Boot service layer backed by MySQL.</div>
+      <div class="proj-feat"><span>Deposits</span><span>Withdrawals</span><span>Transaction Tracking</span></div>
+      <div class="proj-bottom">
+        <div class="proj-tech"><span>SPRING BOOT</span><span>MYSQL</span></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ CERTIFICATIONS ============ -->
+<section class="section" id="certs">
+  <div class="section-head">
+    <span class="section-index mono">05</span>
+    <h2 class="section-title">Clearance &amp; Certifications</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="cert-list" data-aos="fade-up">
+    <div class="cert-item"><span class="cert-num mono">01</span>Commonwealth Bank Software Engineering Job Simulation</div>
+    <div class="cert-item"><span class="cert-num mono">02</span>Walmart USA Advanced Software Engineering Job Simulation</div>
+    <div class="cert-item"><span class="cert-num mono">03</span>Skyscanner Front-End Software Engineering Job Simulation</div>
+    <div class="cert-item"><span class="cert-num mono">04</span>Microsoft Prompt Engineering with GitHub Copilot</div>
+    <div class="cert-item"><span class="cert-num mono">05</span>Java Full Stack Development</div>
+    <div class="cert-item"><span class="cert-num mono">06</span>Google Gemini for Workspace</div>
+    <div class="cert-item"><span class="cert-num mono">07</span>Introduction to Generative AI</div>
+  </div>
+</section>
+
+<!-- ============ CONTACT ============ -->
+<section class="section" id="contact">
+  <div class="contact-panel" data-aos="zoom-in">
+    <div class="contact-eyebrow">● CHANNEL OPEN</div>
+    <h2 class="contact-title">Let's build something<br><span class="hl-cyan">worth deploying.</span></h2>
+    <p class="contact-sub">Open to backend, full-stack, and AI-assisted engineering opportunities — or just a good conversation about disaster-tech and orbital dashboards.</p>
+    <div class="contact-links">
+      <a href="mailto:tribhuvaneraj@gmail.com" class="btn btn-primary">EMAIL ME</a>
+      <a href="https://linkedin.com/in/raj-tribhuvane-b58259375" target="_blank" class="btn btn-ghost">LINKEDIN</a>
+      <a href="https://github.com/tribhuvaneraj-ship-it" target="_blank" class="btn btn-ghost">GITHUB</a>
+      <a href="https://rajtribhuvaneportfolio.netlify.app" target="_blank" class="btn btn-ghost">PORTFOLIO</a>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <span>© 2026 RAJ C. TRIBHUVANE — TRANSMISSION END</span>
+  <span id="clock2">STATUS: NOMINAL</span>
+</footer>
+
+<!-- ============ SCRIPTS ============ -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.1/aos.min.js"></script>
+
+<script>
+/* ---------- clock ---------- */
+function updateClock(){
+  const now = new Date();
+  const t = now.toLocaleTimeString('en-IN',{hour12:false});
+  document.getElementById('clock').textContent = t + ' IST';
+}
+setInterval(updateClock,1000);
+updateClock();
+
+/* ---------- telemetry jitter ---------- */
+function jitterTelemetry(){
+  const alt = (408 + (Math.random()*1.4-0.7)).toFixed(1);
+  const vel = (7.66 + (Math.random()*0.04-0.02)).toFixed(2);
+  document.getElementById('tel-alt').textContent = alt;
+  document.getElementById('tel-vel').textContent = vel;
+}
+setInterval(jitterTelemetry, 1800);
+
+/* ---------- AOS ---------- */
+AOS.init({duration:700, once:true, easing:'ease-out-cubic'});
+
+/* ---------- animated counters ---------- */
+document.querySelectorAll('.hstat-num').forEach(el=>{
+  const target = parseFloat(el.dataset.count);
+  const decimal = el.dataset.decimal ? 1 : 0;
+  anime({
+    targets: el,
+    innerHTML: [0, target],
+    round: decimal ? 10 : 1,
+    easing: 'easeOutExpo',
+    duration: 1800,
+    delay: 400,
+    update: function(anim){
+      let v = anim.animations[0].currentValue;
+      el.innerHTML = decimal ? (Math.round(v*10)/10).toFixed(1) : Math.round(v);
+    }
+  });
+});
+
+/* ---------- gauge bar fill ---------- */
+window.addEventListener('DOMContentLoaded', ()=>{
+  setTimeout(()=>{
+    document.querySelectorAll('.gauge-bar-fill').forEach(el=>{
+      el.style.width = el.dataset.target + '%';
+    });
+  }, 300);
+});
+
+/* ================= THREE.JS BACKGROUND STARFIELD ================= */
+(function(){
+  const canvas = document.getElementById('stars-canvas');
+  const renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 1, 2000);
+  camera.position.z = 500;
+
+  // starfield
+  const starCount = 1400;
+  const starGeo = new THREE.BufferGeometry();
+  const positions = new Float32Array(starCount*3);
+  for(let i=0;i<starCount;i++){
+    positions[i*3] = (Math.random()-0.5)*2000;
+    positions[i*3+1] = (Math.random()-0.5)*2000;
+    positions[i*3+2] = (Math.random()-0.5)*2000;
+  }
+  starGeo.setAttribute('position', new THREE.BufferAttribute(positions,3));
+  const starMat = new THREE.PointsMaterial({color:0x4fd8e8, size:1.4, transparent:true, opacity:0.55});
+  const stars = new THREE.Points(starGeo, starMat);
+  scene.add(stars);
+
+  const starMat2 = new THREE.PointsMaterial({color:0xffffff, size:1.0, transparent:true, opacity:0.4});
+  const stars2 = new THREE.Points(starGeo.clone(), starMat2);
+  stars2.rotation.set(0.4,0.4,0);
+  scene.add(stars2);
+
+  let mouseX = 0, mouseY = 0;
+  window.addEventListener('mousemove', (e)=>{
+    mouseX = (e.clientX/window.innerWidth - 0.5);
+    mouseY = (e.clientY/window.innerHeight - 0.5);
+  });
+
+  function animateBG(){
+    requestAnimationFrame(animateBG);
+    stars.rotation.y += 0.0002;
+    stars.rotation.x += 0.00005;
+    stars2.rotation.y -= 0.00015;
+    camera.position.x += (mouseX*30 - camera.position.x)*0.02;
+    camera.position.y += (-mouseY*30 - camera.position.y)*0.02;
+    camera.lookAt(scene.position);
+    renderer.render(scene, camera);
+  }
+  animateBG();
+
+  window.addEventListener('resize', ()=>{
+    camera.aspect = window.innerWidth/window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+})();
+
+/* ================= THREE.JS HERO SATELLITE / GLOBE ================= */
+(function(){
+  const container = document.getElementById('hero-3d');
+  const width = container.clientWidth;
+  const height = container.clientHeight;
+
+  const renderer = new THREE.WebGLRenderer({antialias:true, alpha:true});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+  renderer.setSize(width, height);
+  container.appendChild(renderer.domElement);
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45, width/height, 0.1, 1000);
+  camera.position.set(0,0,7.2);
+
+  const group = new THREE.Group();
+  scene.add(group);
+
+  // wireframe globe
+  const globeGeo = new THREE.IcosahedronGeometry(2.1, 3);
+  const globeMat = new THREE.MeshBasicMaterial({color:0x4fd8e8, wireframe:true, transparent:true, opacity:0.35});
+  const globe = new THREE.Mesh(globeGeo, globeMat);
+  group.add(globe);
+
+  // inner solid core (subtle)
+  const coreGeo = new THREE.SphereGeometry(1.85, 32, 32);
+  const coreMat = new THREE.MeshBasicMaterial({color:0x0f1830, transparent:true, opacity:0.55});
+  const core = new THREE.Mesh(coreGeo, coreMat);
+  group.add(core);
+
+  // orbit rings
+  function makeRing(radius, color, opacity, tiltX, tiltZ){
+    const ringGeo = new THREE.TorusGeometry(radius, 0.008, 8, 128);
+    const ringMat = new THREE.MeshBasicMaterial({color:color, transparent:true, opacity:opacity});
+    const ring = new THREE.Mesh(ringGeo, ringMat);
+    ring.rotation.x = tiltX;
+    ring.rotation.z = tiltZ;
+    return ring;
+  }
+  const ring1 = makeRing(2.9, 0xffb454, 0.5, Math.PI/2.4, 0.3);
+  const ring2 = makeRing(3.3, 0x4fd8e8, 0.3, Math.PI/2.1, -0.5);
+  group.add(ring1, ring2);
+
+  // small satellite node traveling on ring1
+  const nodeGeo = new THREE.SphereGeometry(0.06, 12, 12);
+  const nodeMat = new THREE.MeshBasicMaterial({color:0xffb454});
+  const node = new THREE.Mesh(nodeGeo, nodeMat);
+  group.add(node);
+
+  // scattered points around
+  const pCount = 120;
+  const pGeo = new THREE.BufferGeometry();
+  const pPos = new Float32Array(pCount*3);
+  for(let i=0;i<pCount;i++){
+    const r = 4 + Math.random()*3;
+    const theta = Math.random()*Math.PI*2;
+    const phi = Math.acos((Math.random()*2)-1);
+    pPos[i*3] = r*Math.sin(phi)*Math.cos(theta);
+    pPos[i*3+1] = r*Math.sin(phi)*Math.sin(theta);
+    pPos[i*3+2] = r*Math.cos(phi);
+  }
+  pGeo.setAttribute('position', new THREE.BufferAttribute(pPos,3));
+  const pMat = new THREE.PointsMaterial({color:0x4fd8e8, size:0.03, transparent:true, opacity:0.6});
+  const scatterPoints = new THREE.Points(pGeo, pMat);
+  scene.add(scatterPoints);
+
+  let mx=0, my=0;
+  container.addEventListener('mousemove',(e)=>{
+    const rect = container.getBoundingClientRect();
+    mx = ((e.clientX-rect.left)/rect.width - 0.5);
+    my = ((e.clientY-rect.top)/rect.height - 0.5);
+  });
+
+  let t = 0;
+  function animateHero(){
+    requestAnimationFrame(animateHero);
+    t += 0.01;
+    globe.rotation.y += 0.0022;
+    core.rotation.y += 0.0022;
+    ring1.rotation.z += 0.0016;
+    ring2.rotation.z -= 0.001;
+    scatterPoints.rotation.y += 0.0006;
+
+    node.position.set(
+      Math.cos(t*1.1)*2.9,
+      Math.sin(t*1.1)*2.9*Math.sin(Math.PI/2.4),
+      Math.sin(t*1.1)*2.9*Math.cos(Math.PI/2.4)
+    );
+
+    group.rotation.y += (mx*0.6 - group.rotation.y)*0.03;
+    group.rotation.x += (-my*0.4 - group.rotation.x)*0.03;
+
+    renderer.render(scene, camera);
+  }
+  animateHero();
+
+  window.addEventListener('resize', ()=>{
+    const w = container.clientWidth;
+    const h = container.clientHeight;
+    camera.aspect = w/h;
+    camera.updateProjectionMatrix();
+    renderer.setSize(w,h);
+  });
+})();
+</script>
+
+</body>
+</html>
